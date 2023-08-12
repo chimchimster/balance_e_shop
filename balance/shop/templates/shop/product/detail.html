@@ -1,0 +1,39 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ product.title }}
+{% endblock %}
+
+{% block content %}
+    <div class="product-detail">
+        <div class="main-image">
+            <img class="main-image" src="{% if product.image.all %}{{ product.image.first.image.url }}{% else %}{% static 'img/no_image.png' %}{% endif %}">
+            <button class="main-image-button prev"><</button>
+            <button class="main-image-button next">></button>
+        </div>
+        <h1>{% with name=product.name %}{{ name }}{% endwith %}</h1>
+        <h2>
+            <a href="{{ product.category.get_absolute_url }}">{% with name=product.name %}{{ name }}{% endwith %}</a>
+        </h2>
+        <p class="price">₽{{ product.price }}</p>
+        <form action="{% url 'cart:cart_add' product_id=product.id %}" method="post">
+            {{ cart_product_form }}
+            {% csrf_token %}
+            <input type="submit" value="Добавить в корзину">
+        </form>
+        {% with description=product.description|linebreaks %}
+            {{ description }}
+        {% endwith %}
+        <div class="attributes">
+            Бренд: {% with brands=product.brand.all %}{% for brand in brands %}{{ brand }}{% endfor %}{% endwith %}<br>
+            Модель: {% with models=product.model.all %}{% for model in models %}{{ model }}{% endfor %}{% endwith %}<br>
+            Цвет: {% with colors=product.color.all %}{% for color in colors %}{{ color }}{% endfor %}{% endwith %}<br>
+            Материал: {% with materials=product.material.all %}{% for material in materials %}{{ material }}{% endfor %}{% endwith %}<br>
+            Код товара: {{ product.product_code }}
+        </div>
+    </div>
+    {% block domready %}
+
+    {% endblock %}
+{% endblock %}

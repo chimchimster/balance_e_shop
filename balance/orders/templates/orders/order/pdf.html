@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    </head>
+    <body>
+        <h1>Баланс</h1>
+        <p>
+            {% with order_id=order.id created=order.created|date:"M d, Y" %}
+                Чек номер {{ order_id }}<br>
+                <span class="secondary">
+                    {{ created }}
+                </span>
+            {% endwith %}
+        </p>
+        <h3>Счет на оплату клиенту:</h3>
+        <p>
+            {% with first_name=order.first_name last_name=order.last_name email=order.email address=order.address postal_code=order.postal_code city=order.city %}
+                {{ first_name }} {{ last_name }}<br>
+                {{ email }}<br>
+                {{ address }}<br>
+                {{ postal_code }}, {{ city }}
+            {% endwith %}
+        </p>
+
+        <h3>Товаров приобретено</h3>
+        <table>
+            <thead>
+                <tr>
+                    <td>Товар</td>
+                    <td>Цена</td>
+                    <td>Количество</td>
+                    <td>Стоимость</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                    <tr class="row{% cycle '1' '2' %}">
+                        <td>{% with name=item.product.name %}{{ name }}{% endwith %}</td>
+                        <td class="num">${{ item.price }}</td>
+                        <td class="num">{{ item.quantity }}</td>
+                        <td class="num">{{ item.get_cost }}</td>
+                    </tr>
+                {% endfor %}
+                <tr class="total">
+                    <td colspan="3">Итого</td>
+                    <td class="num">{{ order.get_total_cost }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <span class="{% if order.paid %}paid{% else %}pending{% endif %}">
+            {% if order.paid %}Оплачено{% else %}Ожидает оплаты{% endif %}
+        </span>
+    </body>
+</html>

@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>{% block title %}Баланс{% endblock %}</title>
+        <link href="{% static 'css/base.css' %}" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    </head>
+    <body>
+        <div id="header">
+            <a href="/" class="logo">Баланс</a>
+        </div>
+        <div id="subheader">
+            {% with total_items=cart|length %}
+                {% if cart|length > 0 %}
+                Ваша корзина:
+                    <a href="{% url 'cart:cart_detail' %}">
+                        {% with total_items_plural=total_items|pluralize total_price=cart.get_total_price %}
+                            {{ total_items }} item{{ total_items_plural }},
+                            ${{ total_price }}
+                        {% endwith %}
+                    </a>
+                {% else %}
+                    Ваша корзина пуста.
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+    </body>
+    <script>
+        $(document).ready(function() {
+            {% block domready %}
+            {% endblock %}
+        });
+    </script>
+</html>
